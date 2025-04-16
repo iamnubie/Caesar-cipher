@@ -20,6 +20,12 @@ import java.awt.Color;
 import javax.swing.SwingConstants;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 
 public class CeasarView extends JFrame {
 
@@ -162,6 +168,60 @@ public class CeasarView extends JFrame {
         dButt.addActionListener(ceasarListener);
         dButtPanel.add(dButt);
 
+        JPanel fileButtonPanel = new JPanel();
+        mainPanel.add(fileButtonPanel, BorderLayout.SOUTH);
+
+        JButton saveButton = new JButton("Ghi file");
+        saveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    BufferedWriter bw = null;
+                    String fileName = "D:\\dulieu.txt";
+                    String s = eCipherTextField.getText(); // Sửa đúng tên biến
+
+                    bw = new BufferedWriter(new FileWriter(fileName));
+                    bw.write(s);
+                    bw.close();
+
+                    JOptionPane.showMessageDialog(null, "Đã Ghi File Thành Công !!!");
+                } catch (IOException ex) {
+                    ex.printStackTrace(); // Nếu chưa khai báo Logger, dùng cách này
+                }
+            }
+        });
+
+        fileButtonPanel.add(saveButton);
+
+        JButton openButton = new JButton("Mở file");
+        openButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    BufferedReader br = null;
+                    String fileName = "D:\\dulieu.txt";
+
+                    br = new BufferedReader(new FileReader(fileName));
+                    StringBuffer sb = new StringBuffer();
+
+                    JOptionPane.showMessageDialog(null, "Đã mở File Thành Công !!!");
+
+                    char[] ca = new char[5];
+                    while (br.ready()) {
+                        int len = br.read(ca);
+                        sb.append(ca, 0, len);
+                    }
+
+                    br.close();
+                    System.out.println("Dữ Liệu là: " + sb);
+                    eCipherTextField.setText(sb.toString());
+                } catch (IOException ex) {
+                    Logger.getLogger(CeasarView.class.getName()).log(Level.SEVERE, null, ex);
+
+                }
+            }
+        });
+        fileButtonPanel.add(openButton);
+
+
         keyGenButt.setFocusPainted(false);
         eButt.setFocusPainted(false);
         dButt.setFocusPainted(false);
@@ -219,7 +279,7 @@ public class CeasarView extends JFrame {
     }
 
     public void seteCipherTextField(String str) {
-        this.eCipherTextField.setText(str);;
+        this.eCipherTextField.setText(str);
     }
 
     public void setShiftKeyTextField(JTextField shiftKeyTextField) {
